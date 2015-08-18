@@ -281,7 +281,7 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
                         }
                         @Override
                         public void onNegativeClicked() {
-                            ((VideoListActivity) getActivity()).showInfoMessage(getString(R.string.wifi_off_message));
+                            ((CourseUnitNavigationActivity) getActivity()).showInfoMessage(getString(R.string.wifi_off_message));
                             notifyAdapter();
                         }
                     };
@@ -323,7 +323,7 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
         long downloadSize = videoData.size;
         if (downloadSize > MemoryUtil
             .getAvailableExternalMemory(getActivity())) {
-            ((VideoListActivity) getActivity())
+            ((CourseUnitNavigationActivity) getActivity())
                 .showInfoMessage(getString(R.string.file_size_exceeded));
             notifyAdapter();
         } else {
@@ -681,13 +681,12 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
                 }
 
                 if (environment.getStorage().addDownload(downloadEntry) != -1) {
-                    ((VideoListActivity) getActivity())
+                    ((CourseUnitNavigationActivity) getActivity())
                         .showInfoMessage(getString(R.string.msg_started_one_video_download));
                 } else {
-                    ((VideoListActivity) getActivity())
+                    ((CourseUnitNavigationActivity) getActivity())
                         .showInfoMessage(getString(R.string.msg_video_not_downloaded));
                 }
-                ((VideoListActivity) getActivity()).updateProgress();
 
                 //If the video is already downloaded, dont reload the adapter
                 if (reloadListFlag) {
@@ -832,6 +831,9 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
                     LinearLayout.LayoutParams.MATCH_PARENT, (int) ideaHeight));
                 playerContainer.requestLayout();
             }
+        }
+        if (playerFragment != null) {
+            playerFragment.handleOnResume();
         }
     }
 
