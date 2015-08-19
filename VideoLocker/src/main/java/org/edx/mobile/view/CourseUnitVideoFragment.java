@@ -21,12 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.edx.mobile.R;
+import org.edx.mobile.base.BaseFragmentActivity;
 import org.edx.mobile.logger.Logger;
 import org.edx.mobile.model.api.EnrolledCoursesResponse;
 import org.edx.mobile.model.api.LectureModel;
 import org.edx.mobile.model.api.ProfileModel;
 import org.edx.mobile.model.api.TranscriptModel;
-import org.edx.mobile.model.api.VideoResponseModel;
 import org.edx.mobile.model.course.CourseComponent;
 import org.edx.mobile.model.course.VideoBlockModel;
 import org.edx.mobile.model.db.DownloadEntry;
@@ -281,7 +281,7 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
                         }
                         @Override
                         public void onNegativeClicked() {
-                            ((CourseUnitNavigationActivity) getActivity()).showInfoMessage(getString(R.string.wifi_off_message));
+                            ((BaseFragmentActivity) getActivity()).showInfoMessage(getString(R.string.wifi_off_message));
                             notifyAdapter();
                         }
                     };
@@ -323,7 +323,7 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
         long downloadSize = videoData.size;
         if (downloadSize > MemoryUtil
             .getAvailableExternalMemory(getActivity())) {
-            ((CourseUnitNavigationActivity) getActivity())
+            ((BaseFragmentActivity) getActivity())
                 .showInfoMessage(getString(R.string.file_size_exceeded));
             notifyAdapter();
         } else {
@@ -681,10 +681,10 @@ public class CourseUnitVideoFragment extends CourseUnitFragment
                 }
 
                 if (environment.getStorage().addDownload(downloadEntry) != -1) {
-                    ((CourseUnitNavigationActivity) getActivity())
+                    ((BaseFragmentActivity) getActivity())
                         .showInfoMessage(getString(R.string.msg_started_one_video_download));
                 } else {
-                    ((CourseUnitNavigationActivity) getActivity())
+                    ((BaseFragmentActivity) getActivity())
                         .showInfoMessage(getString(R.string.msg_video_not_downloaded));
                 }
 
