@@ -161,6 +161,9 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
         Intent resultData = new Intent();
         resultData.putExtra(Router.EXTRA_COURSE_UNIT, selectedUnit);
         setResult(RESULT_OK, resultData);
+
+        boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        environment.getSegment().trackCourseComponentViewed(selectedUnit.getId(), courseData.getCourse().getId(), isPortrait);
     }
 
     private void tryToUpdateForEndOfSequential(){
@@ -221,16 +224,16 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         if( selectedUnit != null )
             outState.putSerializable(Router.EXTRA_COURSE_UNIT, selectedUnit);
-        super.onSaveInstanceState(outState);
     }
 
     protected void restore(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            setCurrentUnit((CourseComponent) savedInstanceState.getSerializable(Router.EXTRA_COURSE_UNIT) );
-        }
         super.restore(savedInstanceState);
+        if (savedInstanceState != null) {
+            selectedUnit = (CourseComponent) savedInstanceState.getSerializable(Router.EXTRA_COURSE_UNIT);
+        }
     }
 
 
@@ -295,10 +298,12 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
             setActionBarVisible(false);
             findViewById(R.id.course_unit_nav_bar).setVisibility(View.GONE);
             pager.setPagingEnabled(false);
+            environment.getSegment().trackCourseComponentViewed(selectedUnit.getId(), courseData.getCourse().getId(), false);
         } else {
             setActionBarVisible(true);
             findViewById(R.id.course_unit_nav_bar).setVisibility(View.VISIBLE);
             pager.setPagingEnabled(true);
+            environment.getSegment().trackCourseComponentViewed(selectedUnit.getId(), courseData.getCourse().getId(), true);
         }
     }
 

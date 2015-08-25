@@ -130,8 +130,7 @@ public abstract  class CourseBaseActivity  extends BaseFragmentActivity implemen
     protected void restore(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             courseData = (EnrolledCoursesResponse) savedInstanceState.getSerializable(Router.EXTRA_ENROLLMENT);
-            courseComponentId =   (String)savedInstanceState.getString(Router.EXTRA_COURSE_COMPONENT_ID);
-
+            courseComponentId = savedInstanceState.getString(Router.EXTRA_COURSE_COMPONENT_ID);
         }
     }
 
@@ -246,6 +245,8 @@ public abstract  class CourseBaseActivity  extends BaseFragmentActivity implemen
                 userPrefManager.setUserPrefVideoModel(selectedVideoMode);
                 modeChanged();
                 invalidateOptionsMenu();
+
+                environment.getSegment().trackCourseOutlineMode(selectedVideoMode);
                 return true;
             }
         });
