@@ -135,10 +135,9 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
         }catch(Exception e){
             logger.error(e);
         }
-
     }
 
-
+    @Override
     protected  String getUrlForWebView(){
         if ( selectedUnit == null ){
             return ""; //wont happen
@@ -152,6 +151,7 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
         if ( this.selectedUnit == null  )
             return;
 
+        courseComponentId = selectedUnit.getId();
         environment.getDatabase().updateAccess(null, selectedUnit.getId(), true);
 
         String prefName = PrefManager.getPrefNameForLastAccessedBy(getProfile()
@@ -159,7 +159,7 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
         final PrefManager prefManager = new PrefManager(MainApplication.instance(), prefName);
         prefManager.putLastAccessedSubsection(this.selectedUnit.getId(), false);
         Intent resultData = new Intent();
-        resultData.putExtra(Router.EXTRA_COURSE_UNIT, selectedUnit);
+        resultData.putExtra(Router.EXTRA_COURSE_COMPONENT_ID, courseComponentId);
         setResult(RESULT_OK, resultData);
 
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
@@ -225,29 +225,24 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if( selectedUnit != null )
-            outState.putSerializable(Router.EXTRA_COURSE_UNIT, selectedUnit);
     }
 
     protected void restore(Bundle savedInstanceState) {
         super.restore(savedInstanceState);
         if (savedInstanceState != null) {
-            selectedUnit = (CourseComponent) savedInstanceState.getSerializable(Router.EXTRA_COURSE_UNIT);
+            selectedUnit = courseManager.getComponentById(courseData.getCourse().getId(), courseComponentId);
         }
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
     }
 
-
+    @Override
     protected void onResume() {
         super.onResume();
-
     }
-
 
     private void updateDataModel(){
         unitList.clear();
@@ -283,9 +278,6 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
     protected void modeChanged(){
         onBackPressed();
     }
-
-
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -328,7 +320,6 @@ public class CourseUnitNavigationActivity extends CourseBaseActivity implements 
             //FIXME - for the video, let's ignore multiDevice for now
             if ( unit instanceof VideoBlockModel) {
                 CourseUnitVideoFragment fragment = CourseUnitVideoFragment.newInstance((VideoBlockModel)unit);
-
                 unitFragment = fragment;
             }
 

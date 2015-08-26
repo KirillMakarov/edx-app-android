@@ -16,6 +16,7 @@ import org.edx.mobile.R;
 import org.edx.mobile.base.BaseFragmentActivity;
 import org.edx.mobile.event.DownloadEvent;
 import org.edx.mobile.model.api.EnrolledCoursesResponse;
+import org.edx.mobile.model.course.CourseComponent;
 import org.edx.mobile.module.prefs.PrefManager;
 import org.edx.mobile.services.CourseManager;
 import org.edx.mobile.third_party.iconify.IconDrawable;
@@ -61,6 +62,9 @@ public abstract  class CourseBaseActivity  extends BaseFragmentActivity implemen
 
     protected EnrolledCoursesResponse courseData;
     protected String courseComponentId;
+
+    // Abstract Methods
+    protected abstract String getUrlForWebView();
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -271,18 +275,17 @@ public abstract  class CourseBaseActivity  extends BaseFragmentActivity implemen
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 new BrowserUtil().open(CourseBaseActivity.this, getUrlForWebView());
+                CourseComponent courseComponent = courseManager.getComponentById(courseData.getCourse().getId(), courseComponentId);
+                if (!courseComponent.isContainer()) {
+                    environment.getSegment().trackOpenInBrowser(courseComponentId
+                            , courseData.getCourse().getId(), courseComponent.isMultiDevice());
+                }
                 return true;
             }
         });
 
         popup.show(); //showing popup menu
     }
-
-
-
-    protected  abstract  String getUrlForWebView();
-
-
 
     /**
      * This function shows the offline mode message
